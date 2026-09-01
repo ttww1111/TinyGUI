@@ -33,7 +33,7 @@
         <value>给个星星，支持一下</value>
     </data>
     <data name="SmartCut" xml:space="preserve">
-        <value>智能剪切</value>
+        <value>智能裁切</value>
     </data>
     <data name="Compression" xml:space="preserve">
         <value>压缩图片</value>
@@ -60,7 +60,7 @@
         <value>http://www.redisant.cn</value>
     </data>
     <data name="PreserveMetadata" xml:space="preserve">
-        <value>保留元数据：</value>
+        <value>保留元数据</value>
     </data>
     <data name="PreserveMetadataTip" xml:space="preserve">
         <value>您可以指定从上传图片拷贝到压缩版本的元数据。当前支持保留版权信息，GPS位置和创建日期。 保留元数据会增加压缩文件的大小，因此您应该只保留重要的元数据。</value>
@@ -82,5 +82,110 @@
     </data>
     <data name="CreationTimeTip" xml:space="preserve">
         <value>保留任何GPS位置信息，该信息描述图片或者照片创建的位置。包含EXIF GPS维度和GPS精度标签（JPEG）。使用大约130个额外字节。</value>
+    </data>
+    <data name="Concurrency" xml:space="preserve">
+        <value>并发数</value>
+    </data>
+    <data name="OpenOutputFolder" xml:space="preserve">
+        <value>打开输出文件夹</value>
+    </data>
+    <data name="NoApiKey" xml:space="preserve">
+        <value>请先在设置里填至少一个 API Key。</value>
+    </data>
+    <data name="DropHint" xml:space="preserve">
+        <value>支持 JPG / PNG / JPEG / WebP，可拖入图片或文件夹，也可单击选择</value>
+    </data>
+    <data name="ClearList" xml:space="preserve">
+        <value>清空列表</value>
+    </data>
+    <data name="LogDetails" xml:space="preserve">
+        <value>详细日志</value>
+    </data>
+    <data name="CopyAllLogs" xml:space="preserve">
+        <value>复制全部日志</value>
+    </data>
+    <data name="ApiKeysHeader" xml:space="preserve">
+        <value>API Keys</value>
+    </data>
+    <data name="ApiKeysTip" xml:space="preserve">
+        <value>每个 Key 独立计额度，用尽自动换下一个</value>
+    </data>
+    <data name="ApiKeyTip" xml:space="preserve">
+        <value>TinyPNG API Key 为 32 位字母和数字</value>
+    </data>
+    <data name="QuotaLabel" xml:space="preserve">
+        <value>剩余额度</value>
+    </data>
+    <data name="CompressResult" xml:space="preserve">
+        <value>压缩结果</value>
+    </data>
+    <data name="AskEachTime" xml:space="preserve">
+        <value>每次询问</value>
+    </data>
+    <data name="AskEachTimeTip" xml:space="preserve">
+        <value>每张图压缩前弹出对话框，让你逐个选择「覆盖原文件」还是「另存为新文件」。</value>
+    </data>
+    <data name="ReplaceOriginal" xml:space="preserve">
+        <value>替换原文件</value>
+    </data>
+    <data name="ReplaceOriginalTip" xml:space="preserve">
+        <value>直接覆盖原始图片，不保留任何备份。节省空间但无法复原。</value>
+    </data>
+    <data name="KeepNewFile" xml:space="preserve">
+        <value>保留为新文件</value>
+    </data>
+    <data name="KeepNewFileTip" xml:space="preserve">
+        <value>原图不动，压缩结果输出到同一文件夹，文件名自动加「-min」后缀。</value>
+    </data>
+    <data name="WidthLabel" xml:space="preserve">
+        <value>宽</value>
+    </data>
+    <data name="HeightLabel" xml:space="preserve">
+        <value>高</value>
+    </data>
+    <data name="Tip" xml:space="preserve">
+        <value>提示</value>
+    </data>
+    <data name="BusyAdding" xml:space="preserve">
+        <value>正在压缩中，请等这一批跑完再添加。</value>
+    </data>
+    <data name="NoImageFound" xml:space="preserve">
+        <value>没有找到可压缩的图片（支持 JPG / PNG / JPEG / WebP）。</value>
+    </data>
+    <data name="SelectImagesTitle" xml:space="preserve">
+        <value>选择要压缩的图片（可多选；整个文件夹请直接拖进来）</value>
+    </data>
+    <data name="NoLogs" xml:space="preserve">
+        <value>暂无日志。</value>
+    </data>
+    <data name="CopyFailed" xml:space="preserve">
+        <value>复制失败，请直接选中文本后按 Ctrl+C。</value>
+    </data>
+    <data name="BusyClearList" xml:space="preserve">
+        <value>正在压缩，不能清空列表，请等这一批跑完。</value>
+    </data>
+    <data name="NotFilled" xml:space="preserve">
+        <value>待填写</value>
+    </data>
+    <data name="RemainingTimes" xml:space="preserve">
+        <value>剩 {0} 次</value>
+    </data>
+    <data name="NotSet" xml:space="preserve">
+        <value>未设置</value>
+    </data>
+    <data name="ReplaceAskTitle" xml:space="preserve">
+        <value>压缩完成</value>
+    </data>
+    <data name="ReplaceAskText" xml:space="preserve">
+        <value>要用压缩后的文件替换原文件吗？</value>
+    </data>
+    <data name="RememberChoice" xml:space="preserve">
+        <value>记住选择</value>
+    </data>
+    <data name="ReplaceKeepButton" xml:space="preserve">
+        <value>新文件</value>
+    </data>
+    <data name="ReplaceOverwriteButton" xml:space="preserve">
+        <value>覆盖原文件</value>
     </data>
 </root>

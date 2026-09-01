@@ -4,366 +4,430 @@
         xmlns:vm="clr-namespace:TinyGUI.ViewModels"
         xmlns:local="clr-namespace:TinyGUI"
         xmlns:p="clr-namespace:TinyGUI.Properties"
-        xmlns:converters="clr-namespace:TinyGUI.Converters"
-        Icon="../Images/panda.ico"
+        xmlns:models="clr-namespace:TinyGUI.Models"
+        Icon="/Images/panda.ico"
         FontSize="12"
         Title="TinyGUI"
-        Width="390"
-        SnapsToDevicePixels="True"
+        Width="520"
+        MinHeight="380"
+        MaxHeight="860"
         SizeToContent="Height"
-        ResizeMode="CanMinimize">
-  <Window.DataContext>
-    <vm:MainModel />
-  </Window.DataContext>
-  <Window.Resources>
-    <converters:IsVisibleConverter x:Key="IsVisibleConverter" />
-  </Window.Resources>
-  <Window.Background>
-    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-      <GradientStop Color="#456E7B" Offset="0.0" />
-      <GradientStop Color="#632350" Offset="1.0" />
-    </LinearGradientBrush>
-  </Window.Background>
-  <Grid Margin="10">
+        SnapsToDevicePixels="True"
+        ResizeMode="CanMinimize"
+        Background="#F5F7FA">
+
+  <Grid Margin="14">
     <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="330" />
-      <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <Border Grid.Row="0"
-            Margin="0 0 0 10"
-            CornerRadius="10"
-            Background="#55FFFFFF"
-            HorizontalAlignment="Center">
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+
+    <!-- 顶部 Tab：主色蓝分段胶囊（宽度贴合内容，不横跨整个窗口） -->
+    <Border Grid.Row="0" Margin="0 0 0 12"
+            HorizontalAlignment="Center"
+            Background="#1C7FD6" CornerRadius="22" Padding="3">
+      <StackPanel Orientation="Horizontal">
         <RadioButton x:Name="CompressRadioButton"
                      IsChecked="{Binding CompressRadioButtonIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     Content="{x:Static p:Resources.Compression}"
-                     Style="{StaticResource CustomRadioButtonStyle}"
-                     Foreground="White" />
-        <RadioButton x:Name="SmartCutRadioButton"
-                     IsChecked="{Binding SmartCutRadioButtonIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     Content="{x:Static p:Resources.SmartCut}"
-                     Style="{StaticResource CustomRadioButtonStyle}"
-                     Foreground="White" />
+                     Content="{Binding Compression, Source={x:Static local:Loc.Instance}}"
+                     Style="{StaticResource TabRadioButtonStyle}"
+                     Margin="0"
+                     Checked="ModeRadioButton_OnChecked" />
         <RadioButton x:Name="SettingRadioButton"
                      IsChecked="{Binding SettingRadioButtonIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                     Content="{x:Static p:Resources.Settings}"
-                     Style="{StaticResource CustomRadioButtonStyle}"
-                     Foreground="White" />
+                     Content="{Binding Settings, Source={x:Static local:Loc.Instance}}"
+                     Style="{StaticResource TabRadioButtonStyle}"
+                     Margin="0"
+                     Checked="ModeRadioButton_OnChecked" />
       </StackPanel>
     </Border>
-    <Grid Grid.Row="1">
-      <Rectangle Grid.Row="0"
-                 AllowDrop="True"
-                 Drop="UIElement_OnDrop"
-                 Fill="#55FFFFFF"
-                 RadiusX="10"
-                 RadiusY="10"
-                 StrokeDashArray="8"
-                 StrokeDashCap="Round"
-                 Stroke="#55FFFFFF"
-                 StrokeThickness="1" />
-      <StackPanel Grid.Row="0" VerticalAlignment="Center"
-                  HorizontalAlignment="Center"
-                  IsHitTestVisible="False">
-        <Image Source="../Images/TinyGUI.png"
-               Margin="0 0 0 10"
-               Stretch="Uniform"
-               Width="100"
-               Height="100"
-               HorizontalAlignment="Center" />
-        <TextBlock HorizontalAlignment="Center"
-                   Foreground="White"
-                   Text="{x:Static p:Resources.DropImageHere}" />
-      </StackPanel>
-    </Grid>
-    <Button Grid.Row="2"
-            Click="DropButton_OnClick"
-            Margin="0 10 0 0"
-            Style="{StaticResource CornerButton}"
-            Content="{x:Static p:Resources.ChooseImageFiles}" />
-    <ProgressBar Grid.Row="3"
-                 Height="4"
-                 Minimum="0" Maximum="1"
-                 BorderThickness="0"
-                 Value="{Binding ProgressBarValue, Mode=OneWay}"
-                 IsIndeterminate="{Binding IsIndeterminate, Mode=OneWay}"
-                 Background="#77000000"
-                 Margin="0 10 0 10" />
-    <StackPanel Grid.Row="4"
-                Visibility="{Binding ElementName=CompressRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource IsVisibleConverter}}">
-      <TextBlock Text="{x:Static p:Resources.Upload}"
-                 Foreground="White"
-                 FontSize="14" />
-      <TextBlock Text="{x:Static p:Resources.UploadTip}"
-                 TextWrapping="Wrap"
-                 Margin="0 5 0 0"
-                 Foreground="#E2E2E2" />
-    </StackPanel>
-    <StackPanel Grid.Row="4"
-                Visibility="{Binding ElementName=SmartCutRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource IsVisibleConverter}}">
-      <Border Margin="0 0 0 10"
-              CornerRadius="10"
-              Background="#55FFFFFF"
-              HorizontalAlignment="Left">
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-          <RadioButton x:Name="ScaleRadioButton"
-                       Content="Scale"
-                       IsChecked="{Binding ScaleRadioButtonIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                       Style="{StaticResource CustomRadioButtonStyle}"
-                       Foreground="White" />
-          <RadioButton x:Name="FitRadioButton"
-                       Content="Fit"
-                       IsChecked="{Binding FitRadioButtonIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                       Style="{StaticResource CustomRadioButtonStyle}"
-                       Foreground="White" />
-          <RadioButton x:Name="CoverRadioButton"
-                       Content="Cover"
-                       IsChecked="{Binding CoverRadioButtonIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                       Style="{StaticResource CustomRadioButtonStyle}"
-                       Foreground="White" />
-          <RadioButton x:Name="ThumbRadioButton"
-                       Content="Thumb"
-                       IsChecked="{Binding ThumbRadioButtonIsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                       Style="{StaticResource CustomRadioButtonStyle}"
-                       Foreground="White" />
+
+    <!-- 版本号：窗口右上角，淡灰、可点击跳转项目主页（复用 VersionHyperlink_OnClick） -->
+    <TextBlock Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Center"
+               Margin="0 0 2 0" FontSize="11" Foreground="#9AA0A6">
+      <Hyperlink Click="VersionHyperlink_OnClick" Foreground="#9AA0A6"
+                 TextDecorations="{x:Null}" ToolTip="TinyGUI 项目主页">
+        <Run Text="v" /><Run Text="{x:Static local:App.Version}" />
+      </Hyperlink>
+    </TextBlock>
+
+    <!-- ============ 压缩区 ============ -->
+    <!-- 与设置区放在同一个 Grid.Row 里：两个面板同时参与布局，
+         窗口高度始终取到两者中较高的（即设置页），切换 Tab 时窗口不再忽高忽低 -->
+    <Grid Grid.Row="1"
+          Opacity="{Binding ElementName=CompressRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource BoolToOpacityConverter}}"
+          IsHitTestVisible="{Binding ElementName=CompressRadioButton, Path=IsChecked, Mode=OneWay}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <!-- 拖拽区：文件 / 文件夹都可以拖进来；单击等同于一个「选择图片」按钮。
+           放在 * 行里，随窗口拉伸到与设置页同高，底部不再留大片空白 -->
+      <Grid Grid.Row="0" MinHeight="200">
+        <Rectangle x:Name="DropArea"
+                   AllowDrop="True"
+                   Drop="UIElement_OnDrop"
+                   MouseDown="DropArea_OnMouseDown"
+                   Cursor="Hand"
+                   Fill="#FFFFFF"
+                   RadiusX="12" RadiusY="12"
+                   Stroke="#1C7FD6" StrokeThickness="2"
+                   StrokeDashArray="8 6" />
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False">
+          <Image Source="/Images/TinyGUI.png" Width="104" Height="104" Margin="0 0 0 10" Stretch="Uniform" />
+          <TextBlock HorizontalAlignment="Center" Foreground="#5A6573" FontSize="13"
+                     Text="{Binding DropImageHere, Source={x:Static local:Loc.Instance}}" />
+          <TextBlock HorizontalAlignment="Center" Foreground="#9AA0A6" FontSize="11" Margin="0 3 0 0"
+                     Text="{Binding DropHint, Source={x:Static local:Loc.Instance}}" />
         </StackPanel>
-      </Border>
-      <Grid Margin="0 0 0 10">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="1*" />
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
-        <TextBlock Text="width:"
-                   Foreground="#E2E2E2"
-                   Grid.Column="0"
-                   VerticalAlignment="Center" />
-        <TextBox Grid.Column="1"
-                 Text="{Binding ImageWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 Style="{StaticResource CustomTextBoxStyle}"
-                 Margin="5 0 10 0"
-                 Padding="5 2"
-                 Foreground="#E2E2E2"
-                 VerticalContentAlignment="Center"
-                 Background="Transparent" />
-        <TextBlock Text="height:"
-                   Foreground="#E2E2E2"
-                   Grid.Column="2"
-                   VerticalAlignment="Center" />
-        <TextBox Grid.Column="3"
-                 Text="{Binding ImageHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 Style="{StaticResource CustomTextBoxStyle}"
-                 Margin="5 0 0 0"
-                 Padding="5 2"
-                 Foreground="#E2E2E2"
-                 VerticalContentAlignment="Center"
-                 Background="Transparent" />
       </Grid>
-      <Border Background="#AAFFFFFF"
-              CornerRadius="5"
-              Visibility="{Binding ElementName=ScaleRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource IsVisibleConverter}}">
+
+      <!-- 文件列表：没有图片时整块隐藏；有图时高度自适应，最多 340px 后内部滚动 -->
+      <Border Grid.Row="1" Margin="0 12 0 0" MinHeight="90" MaxHeight="380" Background="White"
+              CornerRadius="10" BorderBrush="#E2E8F0" BorderThickness="1"
+              Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="6">
+          <ItemsControl ItemsSource="{Binding Images}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="{x:Type models:ImageItem}">
+                <Border Margin="4 4 4 6" Padding="8" CornerRadius="8" Background="#F5F7FA">
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding FileName}" Foreground="#2D3748" FontWeight="SemiBold"
+                                 TextTrimming="CharacterEllipsis" />
+                      <StackPanel Orientation="Horizontal" Margin="0 3 0 0">
+                        <TextBlock Text="{Binding OriginalSizeText}" Foreground="#9AA0A6" />
+                        <TextBlock Text=" → " Foreground="#C2CAD3" />
+                        <TextBlock Text="{Binding CompressedSizeText}" Foreground="#2D3748" />
+                        <TextBlock Text="{Binding SavedText}" Foreground="#2BB673" FontWeight="SemiBold"
+                                   Margin="6 0 0 0" />
+                      </StackPanel>
+                      <TextBlock Text="{Binding ErrorMessage}" Foreground="#E0533D" FontSize="10"
+                                 TextTrimming="CharacterEllipsis" Margin="0 2 0 0"
+                                 Visibility="{Binding ErrorMessage, Converter={StaticResource EmptyToVisibilityConverter}}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding StatusText}" VerticalAlignment="Center"
+                               Foreground="{Binding StatusColor}" FontWeight="SemiBold" Margin="8 0 0 0" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Border>
+
+      <!-- 状态 / 进度 / 额度 / 操作 -->
+      <StackPanel Grid.Row="2" Margin="0 12 0 0">
+        <TextBlock Text="{Binding StatusText}" Foreground="#2D3748"
+                   TextTrimming="CharacterEllipsis" MinHeight="16" />
+
+        <!-- 进度条只在压缩中显示，空闲时不保留那条灰色背景线 -->
+        <ProgressBar Height="6" Minimum="0" Maximum="1" Margin="0 8 0 6"
+                     Value="{Binding ProgressValue, Mode=OneWay}"
+                     IsIndeterminate="{Binding IsIndeterminate, Mode=OneWay}"
+                     Foreground="#1C7FD6" Background="#E2E8F0" BorderThickness="0"
+                     Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibilityConverter}}" />
+
         <Grid>
           <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="1*" />
-          </Grid.ColumnDefinitions>
-          <Image Grid.Column="0"
-                 Width="180"
-                 Source="../Images/scale/scale.png"
-                 Stretch="Uniform"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Center" />
-          <TextBlock Grid.Column="1"
-                     Margin="0 0 5 0"
-                     VerticalAlignment="Center"
-                     Text="{x:Static p:Resources.ScaleTip}"
-                     TextWrapping="Wrap" />
-        </Grid>
-      </Border>
-      <Border Background="#AAFFFFFF"
-              CornerRadius="5"
-              Visibility="{Binding ElementName=FitRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource IsVisibleConverter}}">
-        <Grid>
-          <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="1*" />
           </Grid.ColumnDefinitions>
-          <Image Grid.Column="0"
-                 Width="180"
-                 Source="../Images/scale/fit.png"
-                 Stretch="Uniform"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Center" />
-          <TextBlock Grid.Column="1"
-                     Margin="0 0 5 0"
-                     VerticalAlignment="Center"
-                     Text="{x:Static p:Resources.FitTip}"
-                     TextWrapping="Wrap" />
+          <TextBlock Grid.Column="0" Text="{Binding QuotaText}" Foreground="#9AA0A6" FontSize="11"
+                     VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                     Visibility="{Binding ShowQuota, Converter={StaticResource BoolToVisibilityConverter}}" />
+          <Button Grid.Column="1" Margin="8 0 0 0" Padding="10 4" FontSize="11"
+                  Style="{StaticResource CornerButton}"
+                  Content="{Binding OpenOutputFolder, Source={x:Static local:Loc.Instance}}"
+                  Click="OpenOutputButton_OnClick" />
+          <Button Grid.Column="2" Margin="8 0 0 0" Padding="10 4" FontSize="11"
+                  Style="{StaticResource CornerButton}"
+                  Content="{Binding ClearList, Source={x:Static local:Loc.Instance}}"
+                  Command="{Binding ClearListCommand}" />
         </Grid>
-      </Border>
-      <Border Background="#AAFFFFFF"
-              CornerRadius="5"
-              Visibility="{Binding ElementName=CoverRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource IsVisibleConverter}}">
-        <Border.BorderBrush>
-          <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#FFFFFF" Offset="0.0" />
-            <GradientStop Color="#456E7B" Offset="1.0" />
-          </LinearGradientBrush>
-        </Border.BorderBrush>
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="1*" />
-          </Grid.ColumnDefinitions>
-          <Image Grid.Column="0"
-                 Width="180"
-                 Source="../Images/scale/cover.png"
-                 Stretch="Uniform"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Center" />
-          <TextBlock Grid.Column="1"
-                     Margin="0 0 5 0"
-                     VerticalAlignment="Center"
-                     Text="{x:Static p:Resources.CoverTip}"
-                     TextWrapping="Wrap" />
-        </Grid>
-      </Border>
-      <Border Background="#AAFFFFFF"
-              CornerRadius="5"
-              Visibility="{Binding ElementName=ThumbRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource IsVisibleConverter}}">
-        <Border.BorderBrush>
-          <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#FFFFFF" Offset="0.0" />
-            <GradientStop Color="#456E7B" Offset="1.0" />
-          </LinearGradientBrush>
-        </Border.BorderBrush>
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="1*" />
-          </Grid.ColumnDefinitions>
-          <Image Grid.Column="0"
-                 Width="180"
-                 Source="../Images/scale/thumb.png"
-                 Stretch="Uniform"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Center" />
-          <TextBlock Grid.Column="1"
-                     Margin="0 0 5 0"
-                     VerticalAlignment="Center"
-                     Text="{x:Static p:Resources.ThumbTip}"
-                     TextWrapping="Wrap" />
-        </Grid>
-      </Border>
-    </StackPanel>
-    <StackPanel Grid.Row="4"
-                Visibility="{Binding ElementName=SettingRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource IsVisibleConverter}}">
-      <TextBlock Text="{x:Static p:Resources.Settings}"
-                 Foreground="White"
-                 FontSize="14" />
-      <Grid Margin="0 5 0 0">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="Auto" />
-          <ColumnDefinition Width="1*" />
-        </Grid.ColumnDefinitions>
-        <TextBlock Grid.Column="0"
-                   Text="API Key:"
-                   FontWeight="Bold"
-                   Foreground="White"
-                   VerticalAlignment="Center" />
-        <TextBox Grid.Column="1"
-                 x:Name="KeyTextBox"
-                 Text="{Binding Source={x:Static p:Settings.Default}, Path=Key, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                 Style="{StaticResource CustomTextBoxStyle}"
-                 Margin="5 0 0 0"
-                 Padding="5 2"
-                 Foreground="#E2E2E2"
-                 VerticalContentAlignment="Center"
-                 Background="Transparent" />
-      </Grid>
-      <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-        <TextBlock Text="{x:Static p:Resources.PreserveMetadata}"
-                   Foreground="White" VerticalAlignment="Center">
-          <TextBlock.ToolTip>
-            <TextBlock MaxWidth="400" TextWrapping="Wrap" Text="{x:Static p:Resources.PreserveMetadataTip}" />
-          </TextBlock.ToolTip>
-        </TextBlock>
-        <CheckBox Margin="0 0 5 0"
-                  Style="{StaticResource CustomCheckBoxStyle}"
-                  Foreground="#E2E2E2"
-                  IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=MetaCopyright, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  Content="{x:Static p:Resources.Copyright}"
-                  VerticalAlignment="Center">
-          <CheckBox.ToolTip>
-            <TextBlock MaxWidth="400" TextWrapping="Wrap" Text="{x:Static p:Resources.CopyrightTip}" />
-          </CheckBox.ToolTip>
-        </CheckBox>
-        <CheckBox Margin="0 0 5 0"
-                  Style="{StaticResource CustomCheckBoxStyle}"
-                  Foreground="#E2E2E2"
-                  IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=MetaLocation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  Content="{x:Static p:Resources.Location}"
-                  VerticalAlignment="Center">
-          <CheckBox.ToolTip>
-            <TextBlock MaxWidth="400" TextWrapping="Wrap" Text="{x:Static p:Resources.LocationTip}" />
-          </CheckBox.ToolTip>
-        </CheckBox>
-        <CheckBox Foreground="#E2E2E2"
-                  Style="{StaticResource CustomCheckBoxStyle}"
-                  IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=MetaCreationTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  Content="{x:Static p:Resources.CreationTime}"
-                  VerticalAlignment="Center">
-          <CheckBox.ToolTip>
-            <TextBlock MaxWidth="400" TextWrapping="Wrap" Text="{x:Static p:Resources.CreationTimeTip}" />
-          </CheckBox.ToolTip>
-        </CheckBox>
       </StackPanel>
-      <StackPanel Margin="0 10 0 0">
-        <StackPanel Orientation="Horizontal">
-          <CheckBox Style="{StaticResource CustomCheckBoxStyle}"
-                    VerticalAlignment="Center"
-                    Content="{x:Static p:Resources.ReplaceOriginalImage}"
-                    IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=ReplaceOriginalImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    Foreground="#E2E2E2" />
-          <Border BorderBrush="#88FFFFFF" BorderThickness="1 0" Margin="5 0" VerticalAlignment="Center" Height="15" />
-          <TextBlock Text="{x:Static p:Resources.Lang}"
-                     Margin="0 0 5 0"
-                     VerticalAlignment="Center"
-                     Foreground="#E2E2E2" />
-          <ComboBox Width="100"
-                    SelectedIndex="{Binding Source={x:Static p:Settings.Default}, Path=LanguageIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Center">
+
+      <!-- 详细日志：压缩开始产生日志后才出现，空闲时不占地方 -->
+      <Expander Grid.Row="3" Margin="0 12 0 0" Header="{Binding LogDetails, Source={x:Static local:Loc.Instance}}" IsExpanded="False"
+                Foreground="#5A6573" FontSize="11"
+                Visibility="{Binding HasLogs, Converter={StaticResource BoolToVisibilityConverter}}"
+                Expanded="LogExpander_OnExpanded" Collapsed="LogExpander_OnExpanded">
+        <Border Margin="0 6 0 0" Background="White" CornerRadius="8"
+                BorderBrush="#E2E8F0" BorderThickness="1">
+          <StackPanel>
+            <TextBox x:Name="LogTextBox" MinHeight="100" MaxHeight="220"
+                     Text="{Binding LogsText, Mode=OneWay}"
+                     IsReadOnly="True" IsReadOnlyCaretVisible="True"
+                     AcceptsReturn="True"
+                     BorderThickness="0" Background="Transparent" Padding="4"
+                     FontFamily="Consolas" FontSize="10.5"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Disabled"
+                     VerticalContentAlignment="Top" />
+            <Button HorizontalAlignment="Right" Margin="0 6 2 2" Padding="10 3" FontSize="10.5"
+                    Style="{StaticResource CornerButton}"
+                    Content="{Binding CopyAllLogs, Source={x:Static local:Loc.Instance}}"
+                    Click="CopyLogButton_OnClick" />
+          </StackPanel>
+        </Border>
+      </Expander>
+    </Grid>
+
+    <!-- ============ 设置区 ============ -->
+    <StackPanel Grid.Row="1" Margin="0 12 0 0"
+                Opacity="{Binding ElementName=SettingRadioButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource BoolToOpacityConverter}}"
+                IsHitTestVisible="{Binding ElementName=SettingRadioButton, Path=IsChecked, Mode=OneWay}">
+
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="{Binding ApiKeysHeader, Source={x:Static local:Loc.Instance}}"
+                     ToolTip="{Binding ApiKeysTip, Source={x:Static local:Loc.Instance}}"
+                     Foreground="#2D3748" FontWeight="SemiBold" VerticalAlignment="Center" />
+          <Button Style="{StaticResource AddKeyButtonStyle}" Margin="8 0 0 0" Command="{Binding AddKeyCommand}">
+            <Path Data="M 6,1 L 6,11 M 1,6 L 11,6" Stroke="White" StrokeThickness="1.5"
+                  Width="12" Height="12" Stretch="None" SnapsToDevicePixels="True" />
+          </Button>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="{Binding Lang, Source={x:Static local:Loc.Instance}}" Margin="0 0 8 0"
+                     VerticalAlignment="Center" Foreground="#2D3748" FontWeight="SemiBold" />
+          <ComboBox Width="110" SelectedIndex="{Binding LanguageIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <ComboBoxItem>中文（简体）</ComboBoxItem>
             <ComboBoxItem>中文（繁体）</ComboBoxItem>
             <ComboBoxItem>English</ComboBoxItem>
             <ComboBoxItem>Deutsch</ComboBoxItem>
           </ComboBox>
         </StackPanel>
+      </Grid>
+
+      <!-- 一行一个 Key：输入框占满整行，右侧直接叠一层额度提示文字（不挡输入）；
+           重复 / 格式错误的 Key 文字标红；删除叉在最右 -->
+      <ItemsControl ItemsSource="{Binding KeyItems}" Margin="0 8 0 0">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate DataType="{x:Type models:ApiKeyItem}">
+            <Grid Margin="0 0 0 6">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Grid Grid.Column="0" Grid.Row="0">
+                <TextBox Style="{StaticResource CustomTextBoxStyle}" Padding="6 4 52 4"
+                         FontFamily="Consolas" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                         MaxLength="32" ToolTip="{Binding ApiKeyTip, Source={x:Static local:Loc.Instance}}"
+                         Foreground="{Binding ValueColor}"
+                         Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Text="{Binding RemainingHint}" FontSize="11"
+                           Foreground="{Binding ValueColor}" Margin="0 0 10 0"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"
+                           IsHitTestVisible="False"
+                           Visibility="{Binding RemainingHint, Converter={StaticResource EmptyToVisibilityConverter}}" />
+              </Grid>
+              <Button Grid.Column="1" Grid.Row="0" Content="×" Padding="6" FontSize="13" Margin="6 0 0 0"
+                      Style="{StaticResource DeleteKeyButtonStyle}"
+                      Command="{Binding DataContext.RemoveKeyCommand,
+                                RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                      CommandParameter="{Binding}" />
+              <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding FormatHint}" FontSize="10"
+                         Foreground="#E0533D" Margin="2 2 0 0"
+                         Visibility="{Binding FormatHint, Converter={StaticResource EmptyToVisibilityConverter}}" />
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+
+      <!-- 总剩余额度："剩余额度"紧挨数字，整体与上面每行 Key 的剩余数字右对齐 -->
+      <Grid Margin="0 6 0 0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right"
+                    VerticalAlignment="Center" Margin="8 0 6 0">
+          <TextBlock Text="{Binding QuotaLabel, Source={x:Static local:Loc.Instance}}" Foreground="#5A6573" FontSize="11"
+                     VerticalAlignment="Center" Margin="0 0 4 0" />
+          <TextBlock Text="{Binding TotalRemainingText}" Foreground="#5A6573" FontSize="11"
+                     VerticalAlignment="Center" />
+        </StackPanel>
+      </Grid>
+
+      <Grid Margin="0 8 0 0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="70" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" Text="{Binding Concurrency, Source={x:Static local:Loc.Instance}}" Foreground="#2D3748" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0 0 6 0" />
+        <TextBox Grid.Column="1" Style="{StaticResource CustomTextBoxStyle}" Padding="4"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Text="{Binding Concurrency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+      </Grid>
+
+      <!-- 保留原数据：标题加粗，和三个选项排在同一行 -->
+      <StackPanel Orientation="Horizontal" Margin="0 12 0 0" VerticalAlignment="Center">
+        <TextBlock Text="{Binding PreserveMetadata, Source={x:Static local:Loc.Instance}}"
+                   Foreground="#2D3748" FontWeight="SemiBold"
+                   VerticalAlignment="Center" Margin="0 0 10 0" />
+        <CheckBox Margin="0 0 6 0" Style="{StaticResource CustomCheckBoxStyle}" Foreground="#2D3748"
+                  Content="{Binding Copyright, Source={x:Static local:Loc.Instance}}"
+                  IsChecked="{Binding MetaCopyright, Mode=TwoWay}" VerticalAlignment="Center" />
+        <CheckBox Margin="0 0 6 0" Style="{StaticResource CustomCheckBoxStyle}" Foreground="#2D3748"
+                  Content="{Binding Location, Source={x:Static local:Loc.Instance}}"
+                  IsChecked="{Binding MetaLocation, Mode=TwoWay}" VerticalAlignment="Center" />
+        <CheckBox Style="{StaticResource CustomCheckBoxStyle}" Foreground="#2D3748"
+                  Content="{Binding CreationTime, Source={x:Static local:Loc.Instance}}"
+                  IsChecked="{Binding MetaCreationTime, Mode=TwoWay}" VerticalAlignment="Center" />
       </StackPanel>
-      <StackPanel Orientation="Horizontal"
-                  Margin="0 10 0 0"
-                  HorizontalAlignment="Left">
-        <TextBlock Foreground="#E2E2E2" FontSize="11" VerticalAlignment="Center">
-          <Hyperlink Click="RedisantHyperlink_OnClick">
-            <Run Text="Redisant" Foreground="#FFFFFF" />
-          </Hyperlink>
-          <Run Text=" design, interface provided by" />
-          <Hyperlink Click="TinifyHyperlink_OnClick">
-            <Run Text="tinify.com" Foreground="#FFFFFF" />
-          </Hyperlink>
-        </TextBlock>
-        <TextBlock Margin="5 0 0 0" VerticalAlignment="Center" FontSize="11">
-          <Hyperlink Click="VersionHyperlink_OnClick">
-            <Run Text="{Binding Source={x:Static local:App.Version}, Mode=OneWay, StringFormat=Version:{0}}"
-                 Foreground="#FFFFFF" />
-          </Hyperlink>
-        </TextBlock>
+
+      <!-- 压缩结果怎么处理：分段选择器，比下拉菜单少点一步 -->
+      <StackPanel Orientation="Horizontal" Margin="0 10 0 0" VerticalAlignment="Center">
+        <TextBlock Text="{Binding CompressResult, Source={x:Static local:Loc.Instance}}" Foreground="#2D3748" FontWeight="SemiBold" Margin="0 0 10 0" VerticalAlignment="Center" />
+        <Border Background="#E8F1FB" CornerRadius="14" Padding="2">
+          <Grid Background="Transparent">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="{Binding ReplaceAskMode}" Background="#4F9BD8" CornerRadius="12"
+                    Margin="0" Panel.ZIndex="0" />
+            <RadioButton Grid.Column="0" Content="{Binding AskEachTime, Source={x:Static local:Loc.Instance}}" GroupName="ReplaceMode"
+                         Style="{StaticResource SegmentedButtonStyle}" Panel.ZIndex="1"
+                         ToolTipService.InitialShowDelay="500" ToolTipService.ShowDuration="8000"
+                         IsChecked="{Binding ReplaceAskMode, Converter={StaticResource IntEqualsConverter}, ConverterParameter=0, Mode=TwoWay}">
+              <RadioButton.ToolTip>
+                <StackPanel Width="200">
+                  <TextBlock Text="{Binding AskEachTime, Source={x:Static local:Loc.Instance}}" FontWeight="Bold" Foreground="#1C7FD6" FontSize="13" Margin="0 0 0 4" />
+                  <TextBlock Text="{Binding AskEachTimeTip, Source={x:Static local:Loc.Instance}}" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+              </RadioButton.ToolTip>
+            </RadioButton>
+            <RadioButton Grid.Column="1" Content="{Binding ReplaceOriginal, Source={x:Static local:Loc.Instance}}" GroupName="ReplaceMode"
+                         Style="{StaticResource SegmentedButtonStyle}" Panel.ZIndex="1"
+                         ToolTipService.InitialShowDelay="500" ToolTipService.ShowDuration="8000"
+                         IsChecked="{Binding ReplaceAskMode, Converter={StaticResource IntEqualsConverter}, ConverterParameter=1, Mode=TwoWay}">
+              <RadioButton.ToolTip>
+                <StackPanel Width="200">
+                  <TextBlock Text="{Binding ReplaceOriginal, Source={x:Static local:Loc.Instance}}" FontWeight="Bold" Foreground="#1C7FD6" FontSize="13" Margin="0 0 0 4" />
+                  <TextBlock Text="{Binding ReplaceOriginalTip, Source={x:Static local:Loc.Instance}}" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+              </RadioButton.ToolTip>
+            </RadioButton>
+            <RadioButton Grid.Column="2" Content="{Binding KeepNewFile, Source={x:Static local:Loc.Instance}}" GroupName="ReplaceMode"
+                         Style="{StaticResource SegmentedButtonStyle}" Panel.ZIndex="1"
+                         ToolTipService.InitialShowDelay="500" ToolTipService.ShowDuration="8000"
+                         IsChecked="{Binding ReplaceAskMode, Converter={StaticResource IntEqualsConverter}, ConverterParameter=2, Mode=TwoWay}">
+              <RadioButton.ToolTip>
+                <StackPanel Width="200">
+                  <TextBlock Text="{Binding KeepNewFile, Source={x:Static local:Loc.Instance}}" FontWeight="Bold" Foreground="#1C7FD6" FontSize="13" Margin="0 0 0 4" />
+                  <TextBlock Text="{Binding KeepNewFileTip, Source={x:Static local:Loc.Instance}}" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+              </RadioButton.ToolTip>
+            </RadioButton>
+          </Grid>
+        </Border>
+      </StackPanel>
+
+      <!-- 智能裁切：开关 + 宽高 + 模式 全部压到一行 -->
+      <StackPanel Orientation="Horizontal" Margin="0 12 0 0" VerticalAlignment="Center" HorizontalAlignment="Left">
+        <CheckBox Content="{Binding SmartCut, Source={x:Static local:Loc.Instance}}" Style="{StaticResource CustomCheckBoxStyle}"
+                  IsChecked="{Binding SmartCutEnabled, Mode=TwoWay}"
+                  FontWeight="SemiBold" Foreground="#2D3748" VerticalAlignment="Center" />
+        <TextBlock Text="{Binding WidthLabel, Source={x:Static local:Loc.Instance}}" Foreground="#5A6573" VerticalAlignment="Center" Margin="12 0 2 0" />
+        <TextBox Width="56" Style="{StaticResource CustomTextBoxStyle}" Padding="4"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding SmartCutEnabled}"
+                 Text="{Binding ImageWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Text="{Binding HeightLabel, Source={x:Static local:Loc.Instance}}" Foreground="#5A6573" VerticalAlignment="Center" Margin="10 0 2 0" />
+        <TextBox Width="56" Style="{StaticResource CustomTextBoxStyle}" Padding="4"
+                 VerticalContentAlignment="Center" HorizontalContentAlignment="Center" IsEnabled="{Binding SmartCutEnabled}"
+                 Text="{Binding ImageHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        <Border Background="#E8F1FB" CornerRadius="14" Padding="2" Margin="12 0 0 0">
+          <Grid Background="Transparent" IsEnabled="{Binding SmartCutEnabled}">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="{Binding ResizeModeIndex}" Background="#4F9BD8" CornerRadius="12"
+                    Margin="0" Panel.ZIndex="0" />
+            <RadioButton Grid.Column="0" Content="Scale" GroupName="ResizeMode"
+                         Style="{StaticResource SegmentedButtonStyle}" Panel.ZIndex="1"
+                         ToolTipService.InitialShowDelay="500" ToolTipService.ShowDuration="8000"
+                         IsChecked="{Binding ResizeModeIndex, Converter={StaticResource IntEqualsConverter}, ConverterParameter=0, Mode=TwoWay}">
+              <RadioButton.ToolTip>
+                <StackPanel Width="200">
+                  <TextBlock Text="Scale（等比缩放）" FontWeight="Bold" Foreground="#1C7FD6" FontSize="13" Margin="0 0 0 4" />
+                  <Grid Width="110" Height="70" Margin="0 2 0 6" HorizontalAlignment="Left">
+                    <Rectangle Stroke="#1C7FD6" StrokeThickness="1" StrokeDashArray="4 3" RadiusX="3" RadiusY="3" Fill="#F5F7FA" />
+                    <Rectangle Width="46" Height="34" Fill="#1C7FD6" RadiusX="3" RadiusY="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Grid>
+                  <TextBlock Text="按比例整体缩放，保持原图宽高比，整体缩小、不裁切、不拉伸。" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+              </RadioButton.ToolTip>
+            </RadioButton>
+            <RadioButton Grid.Column="1" Content="Fit" GroupName="ResizeMode"
+                         Style="{StaticResource SegmentedButtonStyle}" Panel.ZIndex="1"
+                         ToolTipService.InitialShowDelay="500" ToolTipService.ShowDuration="8000"
+                         IsChecked="{Binding ResizeModeIndex, Converter={StaticResource IntEqualsConverter}, ConverterParameter=1, Mode=TwoWay}">
+              <RadioButton.ToolTip>
+                <StackPanel Width="200">
+                  <TextBlock Text="Fit（适应框）" FontWeight="Bold" Foreground="#1C7FD6" FontSize="13" Margin="0 0 0 4" />
+                  <Grid Width="110" Height="70" Margin="0 2 0 6" HorizontalAlignment="Left">
+                    <Rectangle Stroke="#1C7FD6" StrokeThickness="1" StrokeDashArray="4 3" RadiusX="3" RadiusY="3" Fill="#F5F7FA" />
+                    <Rectangle Width="46" Height="34" Fill="#1C7FD6" RadiusX="3" RadiusY="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                  </Grid>
+                  <TextBlock Text="等比缩放到能完整放进 W×H 框内，较短的一边会留白，不裁切。" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+              </RadioButton.ToolTip>
+            </RadioButton>
+            <RadioButton Grid.Column="2" Content="Cover" GroupName="ResizeMode"
+                         Style="{StaticResource SegmentedButtonStyle}" Panel.ZIndex="1"
+                         ToolTipService.InitialShowDelay="500" ToolTipService.ShowDuration="8000"
+                         IsChecked="{Binding ResizeModeIndex, Converter={StaticResource IntEqualsConverter}, ConverterParameter=2, Mode=TwoWay}">
+              <RadioButton.ToolTip>
+                <StackPanel Width="200">
+                  <TextBlock Text="Cover（填满裁剪）" FontWeight="Bold" Foreground="#1C7FD6" FontSize="13" Margin="0 0 0 4" />
+                  <Grid Width="110" Height="70" Margin="0 2 0 6" HorizontalAlignment="Left">
+                    <Rectangle Stroke="#1C7FD6" StrokeThickness="1" StrokeDashArray="4 3" RadiusX="3" RadiusY="3" />
+                    <Rectangle Fill="#1C7FD6" RadiusX="3" RadiusY="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                  </Grid>
+                  <TextBlock Text="等比放大填满整个 W×H 框，超出框的部分被裁掉，不会留白。" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+              </RadioButton.ToolTip>
+            </RadioButton>
+            <RadioButton Grid.Column="3" Content="Thumb" GroupName="ResizeMode"
+                         Style="{StaticResource SegmentedButtonStyle}" Panel.ZIndex="1"
+                         ToolTipService.InitialShowDelay="500" ToolTipService.ShowDuration="8000"
+                         IsChecked="{Binding ResizeModeIndex, Converter={StaticResource IntEqualsConverter}, ConverterParameter=3, Mode=TwoWay}">
+              <RadioButton.ToolTip>
+                <StackPanel Width="200">
+                  <TextBlock Text="Thumb（精确缩略图）" FontWeight="Bold" Foreground="#1C7FD6" FontSize="13" Margin="0 0 0 4" />
+                  <Grid Width="110" Height="70" Margin="0 2 0 6" HorizontalAlignment="Left">
+                    <Rectangle Stroke="#1C7FD6" StrokeThickness="1" StrokeDashArray="4 3" RadiusX="3" RadiusY="3" />
+                    <Rectangle Fill="#1C7FD6" RadiusX="3" RadiusY="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                  </Grid>
+                  <TextBlock Text="精确裁切并缩放成 W×H 的缩略图，直接丢弃溢出区域。" TextWrapping="Wrap" FontSize="11" />
+                </StackPanel>
+              </RadioButton.ToolTip>
+            </RadioButton>
+          </Grid>
+        </Border>
       </StackPanel>
     </StackPanel>
   </Grid>

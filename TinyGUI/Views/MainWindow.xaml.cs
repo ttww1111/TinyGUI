@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
-using Microsoft.Win32;
-using TinifyAPI;
+using System.Windows.Input;
+using TinyGUI.Properties;
 using TinyGUI.ViewModels;
+using TinyGUI.Services;
 
 namespace TinyGUI.Views
 {
@@ -18,295 +16,165 @@ namespace TinyGUI.Views
 
         public MainWindow()
         {
+            // 先造好 ViewModel 并挂上 DataContext，再 InitializeComponent。
+            // 反过来的话，InitializeComponent 期间 DataContext 还是 null，控件停在默认值
+            // （CheckBox 是 false）；等 DataContext 一挂上，双向绑定会把控件的假值回推给
+            // ViewModel，把从磁盘读出来的真实设置冲掉。
+            var pool = new KeyPool(AppSettings.Current.ApiKeys);
+            _mainModel = new MainModel(new ImageCompressor(pool));
+            DataContext = _mainModel;
             InitializeComponent();
-            _mainModel = (MainModel) DataContext;
-            if (string.IsNullOrEmpty(TinyGUI.Properties.Settings.Default.Key))
+            // 标题栏带版本号，方便用户/客服一眼确认当前版本。
+            // 必须在 InitializeComponent 之后设，否则会被 XAML 的 Title="TinyGUI" 覆盖。
+            Title = $"TinyGUI v{App.Version}";
+
+            if (AppSettings.Current.ApiKeys.Count == 0)
             {
                 _mainModel.SettingRadioButtonIsChecked = true;
-                KeyTextBox?.Focus();
             }
+
+            // 新日志追加时自动滚动到底部
+            _mainModel.LogAppended += () =>
+            {
+                LogTextBox.ScrollToEnd();
+                LogTextBox.CaretIndex = LogTextBox.Text.Length;
+            };
+
+            // 切语言后文案长度会变，让窗口高度重新贴合内容
+            Loc.Instance.PropertyChanged += (s, e) => RefreshHeight();
         }
 
         protected override void OnClosed(EventArgs e)
         {
+            // 确保设置已落盘
+            AppSettings.Current.Save();
             base.OnClosed(e);
-            TinyGUI.Properties.Settings.Default.Save();
         }
 
-        private async void DropButton_OnClick(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// 切换 Tab 或展开/折叠日志后，让窗口高度重新贴合内容。
+        /// 窗口用 SizeToContent="Height" 自适应，尺寸变化后需要手动触发一次重新计算。
+        /// </summary>
+        private void RefreshHeight()
         {
-            if (string.IsNullOrEmpty(TinyGUI.Properties.Settings.Default.Key))
+            SizeToContent = SizeToContent.Manual;
+            UpdateLayout();
+            SizeToContent = SizeToContent.Height;
+        }
+
+        private void ModeRadioButton_OnChecked(object sender, RoutedEventArgs e) => RefreshHeight();
+
+        private void LogExpander_OnExpanded(object sender, RoutedEventArgs e) => RefreshHeight();
+
+        private void StartWith(IEnumerable<string> paths)
+        {
+            if (_mainModel.IsBusy)
             {
+                MessageBox.Show(Loc.Instance.BusyAdding, Loc.Instance.Tip);
                 return;
             }
 
-            OpenFileDialog openFileDialog = new OpenFileDialog()
+            var images = CollectImages(paths);
+            if (images.Count == 0)
             {
-                Multiselect = true,
-                Filter = "(*.jpg,*.png,*.jpeg,*.webp)|*.jpg;*.png;*.jpeg;*.webp;",
-                CheckFileExists = true
+                MessageBox.Show(Loc.Instance.NoImageFound, Loc.Instance.Tip);
+                return;
+            }
+
+            if (AppSettings.Current.ApiKeys.Count == 0)
+            {
+                MessageBox.Show(Loc.Instance.NoApiKey, Loc.Instance.Tip);
+                _mainModel.SettingRadioButtonIsChecked = true;
+                return;
+            }
+
+            _mainModel.PrepareStart(images);
+            _mainModel.StartCommand.Execute(null);
+        }
+
+        /// <summary>把拖入/选中的路径展开为图片列表：目录会递归扫描子目录</summary>
+        private static List<string> CollectImages(IEnumerable<string> paths)
+        {
+            var result = new List<string>();
+            if (paths == null) return result;
+
+            foreach (var p in paths)
+            {
+                try
+                {
+                    if (Directory.Exists(p))
+                        result.AddRange(Directory.EnumerateFiles(p, "*.*", SearchOption.AllDirectories).Where(IsImage));
+                    else if (File.Exists(p) && IsImage(p))
+                        result.Add(p);
+                }
+                catch
+                {
+                    // 无权限访问的子目录直接跳过，不中断整体扫描
+                }
+            }
+            return result;
+        }
+
+        /// <summary>单击拖拽区 = 点了一个「选择图片」按钮</summary>
+        private void DropArea_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left) return;
+            e.Handled = true;
+
+            var dlg = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = Loc.Instance.SelectImagesTitle,
+                Filter = "图片文件|*.jpg;*.jpeg;*.png;*.webp|所有文件|*.*",
+                Multiselect = true
             };
-            if (openFileDialog.ShowDialog() == true)
-            {
-                string[] imgPaths = openFileDialog.FileNames;
-                await Start(imgPaths.ToList());
-            }
+            if (dlg.ShowDialog() == true)
+                StartWith(dlg.FileNames);
         }
 
-        private async void UIElement_OnDrop(object sender, DragEventArgs e)
+        private void UIElement_OnDrop(object sender, DragEventArgs e)
         {
-            if (string.IsNullOrEmpty(TinyGUI.Properties.Settings.Default.Key))
-            {
-                return;
-            }
-
-            List<string> imgPaths = new List<string>();
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] paths = (string[]) e.Data.GetData(DataFormats.FileDrop);
-                if (paths != null)
-                {
-                    foreach (string path in paths)
-                    {
-                        if (IsImage(path))
-                        {
-                            imgPaths.Add(path);
-                        }
-                    }
-                }
+                var dropped = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (dropped != null && dropped.Length > 0)
+                    StartWith(dropped);
             }
-
-            await Start(imgPaths);
-        }
-
-        private async Task Start(List<string> imgPaths)
-        {
-            if (imgPaths.Count > 0)
-            {
-                if (_mainModel.SmartCutRadioButtonIsChecked)
-                {
-                    uint width = 0;
-                    uint height = 0;
-                    if (uint.TryParse(_mainModel.ImageWidth, out uint result1))
-                    {
-                        width = result1;
-                    }
-
-                    if (uint.TryParse(_mainModel.ImageHeight, out uint result2))
-                    {
-                        height = result2;
-                    }
-
-                    if (_mainModel.ScaleRadioButtonIsChecked)
-                    {
-                        string type = "scale";
-                        if (width != 0 || height != 0)
-                        {
-                            await Compress(imgPaths, type, width, height);
-                        }
-                    }
-                    else if (_mainModel.FitRadioButtonIsChecked)
-                    {
-                        string type = "fit";
-                        if (width != 0 && height != 0)
-                        {
-                            await Compress(imgPaths, type, width, height);
-                        }
-                    }
-                    else if (_mainModel.CoverRadioButtonIsChecked)
-                    {
-                        string type = "cover";
-                        if (width != 0 && height != 0)
-                        {
-                            await Compress(imgPaths, type, width, height);
-                        }
-                    }
-                    else if (_mainModel.ThumbRadioButtonIsChecked)
-                    {
-                        string type = "thumb";
-                        if (width != 0 && height != 0)
-                        {
-                            await Compress(imgPaths, type, width, height);
-                        }
-                    }
-                }
-                else
-                {
-                    await Compress(imgPaths);
-                }
-            }
-        }
-
-        private async Task Compress(List<string> imgPaths)
-        {
-            imgPaths.Sort();
-            _mainModel.IsIndeterminate = true;
-            if (string.IsNullOrEmpty(Tinify.Key))
-            {
-                Tinify.Key = TinyGUI.Properties.Settings.Default.Key;
-            }
-
-            int i = 0;
-            foreach (string path in imgPaths)
-            {
-                var source = Tinify.FromFile(path);
-                source = Preserve(source);
-                string savePath = path;
-                if (!TinyGUI.Properties.Settings.Default.ReplaceOriginalImage)
-                {
-                    string extension = Path.GetExtension(path).ToLower();
-                    string fileName = Path.GetFileName(path);
-                    string directoryName = Path.GetDirectoryName(path);
-                    Debug.Assert(directoryName != null, nameof(directoryName) + " != null");
-                    string newPath = Path.Combine(directoryName, $"{fileName.Substring(0, fileName.Length - extension.Length)}-{GetTimeStamp()}{extension}");
-                    savePath = newPath;
-                }
-
-                await source.ToFile(savePath);
-                i++;
-                _mainModel.ProgressBarValue = (i + 0.0) / imgPaths.Count;
-            }
-
-            _mainModel.IsIndeterminate = false;
-            _mainModel.ProgressBarValue = 0;
-        }
-
-        private async Task Compress(List<string> imgPaths, string type, uint width, uint height)
-        {
-            imgPaths.Sort();
-            _mainModel.IsIndeterminate = true;
-            if (string.IsNullOrEmpty(Tinify.Key))
-            {
-                Tinify.Key = TinyGUI.Properties.Settings.Default.Key;
-            }
-
-            int i = 0;
-            foreach (string path in imgPaths)
-            {
-                var source = Tinify.FromFile(path);
-                source = Preserve(source);
-                string savePath = path;
-                if (!TinyGUI.Properties.Settings.Default.ReplaceOriginalImage)
-                {
-                    string extension = Path.GetExtension(path).ToLower();
-                    string fileName = Path.GetFileName(path);
-                    string directoryName = Path.GetDirectoryName(path);
-                    Debug.Assert(directoryName != null, nameof(directoryName) + " != null");
-                    savePath = Path.Combine(directoryName, $"{fileName.Substring(0, fileName.Length - extension.Length)}-{GetTimeStamp()}{extension}");
-                }
-
-                switch (type)
-                {
-                    case "scale":
-                    {
-                        if (width > 0)
-                        {
-                            var resized = source.Resize(new
-                            {
-                                method = type,
-                                width = width
-                            });
-
-                            await resized.ToFile(savePath);
-                        }
-                        else if (height > 0)
-                        {
-                            var resized = source.Resize(new
-                            {
-                                method = type,
-                                height = height
-                            });
-
-                            await resized.ToFile(savePath);
-                        }
-
-                        break;
-                    }
-
-                    case "fit":
-                    case "cover":
-                    case "thumb":
-                    {
-                        var resized = source.Resize(new
-                        {
-                            method = type,
-                            width = width,
-                            height = height
-                        });
-
-                        await resized.ToFile(savePath);
-                        break;
-                    }
-                }
-
-
-                i++;
-                _mainModel.ProgressBarValue = (i + 0.0) / imgPaths.Count;
-            }
-
-            _mainModel.IsIndeterminate = false;
-            _mainModel.ProgressBarValue = 0;
-        }
-
-        //保留元数据
-        private Task<Source> Preserve(Task<Source> source)
-        {
-            List<string> metas = new List<string>();
-            if (TinyGUI.Properties.Settings.Default.MetaCopyright)
-            {
-                metas.Add("copyright");
-            }
-
-            if (TinyGUI.Properties.Settings.Default.MetaLocation)
-            {
-                metas.Add("location");
-            }
-
-            if (TinyGUI.Properties.Settings.Default.MetaCreationTime)
-            {
-                metas.Add("creation");
-            }
-
-            if (metas.Count > 0)
-            {
-                return source.Preserve(metas.ToArray());
-            }
-
-            return source;
-        }
-
-        private static long GetTimeStamp()
-        {
-            TimeSpan ts = DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            return Convert.ToInt64(ts.TotalMilliseconds);
         }
 
         private static bool IsImage(string path)
         {
-            string extension = Path.GetExtension(path).ToLower();
-            if (extension.EndsWith("webp") || extension.EndsWith("jpg")
-                                           || extension.EndsWith("jpeg")
-                                           || extension.EndsWith("png"))
-            {
-                return true;
-            }
-
-            return false;
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return ext == ".webp" || ext == ".jpg" || ext == ".jpeg" || ext == ".png";
         }
+
+        private void OpenOutputButton_OnClick(object sender, RoutedEventArgs e)
+            => _mainModel.OpenOutputFolderCommand.Execute(null);
 
         private void VersionHyperlink_OnClick(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start("https://github.com/chenjing1294/TinyGUI");
-        }
+            => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/chenjing1294/TinyGUI") { UseShellExecute = true });
 
         private void TinifyHyperlink_OnClick(object sender, RoutedEventArgs e)
-        {
-            System.Diagnostics.Process.Start(TinyGUI.Properties.Resources.KeyUrl);
-        }
+            => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(TinyGUI.Properties.Resources.KeyUrl) { UseShellExecute = true });
 
         private void RedisantHyperlink_OnClick(object sender, RoutedEventArgs e)
+            => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(TinyGUI.Properties.Resources.Redisant) { UseShellExecute = true });
+
+        private void CopyLogButton_OnClick(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(TinyGUI.Properties.Resources.Redisant);
+            var text = _mainModel.LogsText;
+            if (string.IsNullOrEmpty(text))
+            {
+                MessageBox.Show(Loc.Instance.NoLogs, Loc.Instance.Tip);
+                return;
+            }
+            try
+            {
+                Clipboard.SetText(text);
+            }
+            catch
+            {
+                MessageBox.Show(Loc.Instance.CopyFailed, Loc.Instance.Tip);
+            }
         }
     }
 }

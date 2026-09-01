@@ -8,3 +8,11 @@ riderModule.iml
 AppPackages/
 BundleArtifacts/
 /Installer/
+
+# ===== 发布产物（green.zip / setup.exe 作为 GitHub Release 附件，不进 git 树）=====
+publish/net48/
+publish/*.zip
+publish/*.exe
+
+# ===== 运行时本地设置（可能含 TinyPNG API Key，绝不入库）=====
+**/settings.json

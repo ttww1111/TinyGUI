@@ -60,7 +60,7 @@
         <value>https://www.redisant.com</value>
     </data>
     <data name="PreserveMetadata" xml:space="preserve">
-        <value>Metadaten beibehalten:</value>
+        <value>Metadaten beibehalten</value>
     </data>
     <data name="PreserveMetadataTip" xml:space="preserve">
         <value>Sie können Metadaten angeben, die aus dem hochgeladenen Bild in die komprimierte Version kopiert werden. Unterstützt derzeit die Beibehaltung von Urheberrechtsinformationen, GPS-Standort und Erstellungsdatum. Das Beibehalten von Metadaten erhöht die Größe komprimierter Dateien, daher sollten Sie nur wichtige Metadaten aufbewahren.</value>
@@ -82,5 +82,110 @@
     </data>
     <data name="CreationTimeTip" xml:space="preserve">
         <value>Alle GPS-Standortinformationen, die beschreiben, wo das Bild oder Foto erstellt wurde, werden beibehalten. Enthält EXIF-GPS-Abmessungen und GPS-Genauigkeits-Tags (JPEG). Verwendet etwa 130 zusätzliche Bytes.</value>
+    </data>
+    <data name="Concurrency" xml:space="preserve">
+        <value>Parallelität</value>
+    </data>
+    <data name="OpenOutputFolder" xml:space="preserve">
+        <value>Ausgabeordner öffnen</value>
+    </data>
+    <data name="NoApiKey" xml:space="preserve">
+        <value>Bitte fügen Sie zuerst mindestens einen API Key in den Einstellungen hinzu.</value>
+    </data>
+    <data name="DropHint" xml:space="preserve">
+        <value>Unterstützt JPG / PNG / JPEG / WebP; Bilder oder einen Ordner hierher ziehen oder zum Auswählen klicken</value>
+    </data>
+    <data name="ClearList" xml:space="preserve">
+        <value>Liste löschen</value>
+    </data>
+    <data name="LogDetails" xml:space="preserve">
+        <value>Detailliertes Protokoll</value>
+    </data>
+    <data name="CopyAllLogs" xml:space="preserve">
+        <value>Alle Protokolle kopieren</value>
+    </data>
+    <data name="ApiKeysHeader" xml:space="preserve">
+        <value>API-Schlüssel</value>
+    </data>
+    <data name="ApiKeysTip" xml:space="preserve">
+        <value>Jeder Key zählt separat; bei Erschöpfung automatisch zum nächsten</value>
+    </data>
+    <data name="ApiKeyTip" xml:space="preserve">
+        <value>TinyPNG API Key besteht aus 32 Buchstaben und Ziffern</value>
+    </data>
+    <data name="QuotaLabel" xml:space="preserve">
+        <value>Verbleibend</value>
+    </data>
+    <data name="CompressResult" xml:space="preserve">
+        <value>Ergebnis</value>
+    </data>
+    <data name="AskEachTime" xml:space="preserve">
+        <value>Jedes Mal fragen</value>
+    </data>
+    <data name="AskEachTimeTip" xml:space="preserve">
+        <value>Vor jedem Bild erscheint ein Dialog, um Original zu überschreiben oder neu zu speichern.</value>
+    </data>
+    <data name="ReplaceOriginal" xml:space="preserve">
+        <value>Original ersetzen</value>
+    </data>
+    <data name="ReplaceOriginalTip" xml:space="preserve">
+        <value>Überschreibt das Original ohne Sicherung. Spart Platz, ist aber nicht umkehrbar.</value>
+    </data>
+    <data name="KeepNewFile" xml:space="preserve">
+        <value>Als neue Datei speichern</value>
+    </data>
+    <data name="KeepNewFileTip" xml:space="preserve">
+        <value>Das Original bleibt; Ausgabe im gleichen Ordner mit "-min" Suffix.</value>
+    </data>
+    <data name="WidthLabel" xml:space="preserve">
+        <value>B</value>
+    </data>
+    <data name="HeightLabel" xml:space="preserve">
+        <value>H</value>
+    </data>
+    <data name="Tip" xml:space="preserve">
+        <value>Hinweis</value>
+    </data>
+    <data name="BusyAdding" xml:space="preserve">
+        <value>Kompression läuft, bitte warten, bis dieser Durchlauf fertig ist.</value>
+    </data>
+    <data name="NoImageFound" xml:space="preserve">
+        <value>Keine komprimierbaren Bilder gefunden (JPG / PNG / JPEG / WebP).</value>
+    </data>
+    <data name="SelectImagesTitle" xml:space="preserve">
+        <value>Bilder zum Komprimieren auswählen (Mehrfachauswahl; ganzen Ordner hierher ziehen)</value>
+    </data>
+    <data name="NoLogs" xml:space="preserve">
+        <value>Noch keine Protokolle.</value>
+    </data>
+    <data name="CopyFailed" xml:space="preserve">
+        <value>Kopieren fehlgeschlagen, bitte Text markieren und Strg+C drücken.</value>
+    </data>
+    <data name="BusyClearList" xml:space="preserve">
+        <value>Liste während der Kompression nicht leerbar, bitte warten.</value>
+    </data>
+    <data name="NotFilled" xml:space="preserve">
+        <value>Nicht ausgefüllt</value>
+    </data>
+    <data name="RemainingTimes" xml:space="preserve">
+        <value>Noch {0} mal</value>
+    </data>
+    <data name="NotSet" xml:space="preserve">
+        <value>Nicht festgelegt</value>
+    </data>
+    <data name="ReplaceAskTitle" xml:space="preserve">
+        <value>Fertig</value>
+    </data>
+    <data name="ReplaceAskText" xml:space="preserve">
+        <value>Originaldatei durch komprimierte ersetzen?</value>
+    </data>
+    <data name="RememberChoice" xml:space="preserve">
+        <value>Auswahl merken</value>
+    </data>
+    <data name="ReplaceKeepButton" xml:space="preserve">
+        <value>Neue Datei</value>
+    </data>
+    <data name="ReplaceOverwriteButton" xml:space="preserve">
+        <value>Original überschreiben</value>
     </data>
 </root>

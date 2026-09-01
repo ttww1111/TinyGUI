@@ -12,6 +12,8 @@ namespace TinyGUI.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        protected void RaisePropertyChanged(string propertyName) => OnPropertyChanged(propertyName);
+
         protected bool SetField<T>(ref T field, T value, string propertyName)
         {
             if (EqualityComparer<T>.Default.Equals(field, value)) return false;

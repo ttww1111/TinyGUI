@@ -1,144 +1,44 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{439823D0-9D2D-4FBB-9805-BE38433AFE5D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>TinyGUI</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
     <AssemblyName>TinyGUI</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
+    <RootNamespace>TinyGUI</RootNamespace>
     <ApplicationIcon>Images\panda.ico</ApplicationIcon>
+    <!-- 单一版本源：程序集版本 / 文件版本 / 信息版本都从这里出。
+         改版本只动这一行；UI 与安装包脚本都会自动同步。 -->
+    <Version>1.1.0</Version>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="WindowsBase" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
+    <PackageReference Include="Tinify" Version="1.9.0" />
+    <!-- net48 编译引用包：免装 .NET Framework 4.8 Dev Pack 也能用 .NET 8 SDK 编 net48 -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" />
   </ItemGroup>
+
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Commands\Command.cs" />
-    <Compile Include="Converters\IsVisibleConverter.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModels\MainModel.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Styles\Button.xaml" />
-    <Page Include="Styles\ComboBoxStyle.xaml" />
-    <Page Include="Styles\Fonts.xaml" />
-    <Page Include="Styles\ScrollViewer.xaml" />
-    <Page Include="Styles\TextBox.xaml" />
-    <Page Include="Views\MainWindow.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.zh-hant.resx">
-      <DependentUpon>Resources.resx</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.zh.resx">
-      <DependentUpon>Resources.resx</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.de-de.resx">
-      <DependentUpon>Resources.resx</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-Bold-Italic.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-Bold.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-BoldItalic.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-ExtraBold.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-ExtraBoldItalic.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-ExtraLight.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-ExtraLightItalic.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-Italic.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-Light.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-LightItalic.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-Medium.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-MediumItalic.ttf" />
+    <!-- 字体：仅保留实际用到的字重，去掉 17 个 JetBrainsMono 变体的臃肿 -->
     <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-Regular.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-Thin.ttf" />
-    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-ThinItalic.ttf" />
+    <Resource Include="Fonts\JetBrainsMono\JetBrainsMono-Bold.ttf" />
     <Resource Include="Fonts\segoe.ttf" />
     <Resource Include="Fonts\Font Awesome 6 Pro-Solid-900.otf" />
   </ItemGroup>
+
   <ItemGroup>
-    <Resource Include="Images\panda.ico" />
-    <Resource Include="Images\TinyGUI.png" />
-    <Resource Include="panda.ico" />
+    <!-- 图片作为 Content 复制到输出目录，供 XAML 以 /Images/... 相对路径引用。
+         Images/scale/*.png 经核查未被任何 XAML 引用（智能裁切用的是绘制的 Rectangle），已从源码删除。 -->
+    <Content Include="Images\panda.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\TinyGUI.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\scale\cover.png" />
-    <Resource Include="Images\scale\fit.png" />
-    <Resource Include="Images\scale\scale.png" />
-    <Resource Include="Images\scale\thumb.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Tinify" Version="1.6.0" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
