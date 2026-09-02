@@ -151,7 +151,7 @@ namespace TinyGUI.Views
             => _mainModel.OpenOutputFolderCommand.Execute(null);
 
         private void VersionHyperlink_OnClick(object sender, RoutedEventArgs e)
-            => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/chenjing1294/TinyGUI") { UseShellExecute = true });
+            => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/ttww1111/TinyGUI") { UseShellExecute = true });
 
         private void TinifyHyperlink_OnClick(object sender, RoutedEventArgs e)
             => System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(TinyGUI.Properties.Resources.KeyUrl) { UseShellExecute = true });
