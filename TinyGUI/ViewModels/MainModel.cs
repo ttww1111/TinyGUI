@@ -546,6 +546,18 @@ namespace TinyGUI.ViewModels
             };
         }
 
+        /// <summary>
+        /// 后台解码缩略图。限制并发数，避免一次拖入几百张图时解码把 CPU 打满、
+        /// 拖慢压缩本身和界面响应。
+        /// </summary>
+        private static void LoadThumbnails(List<ImageItem> items)
+        {
+            if (items == null || items.Count == 0) return;
+            Parallel.ForEach(items,
+                new ParallelOptions { MaxDegreeOfParallelism = Math.Min(4, Math.Max(1, Environment.ProcessorCount)) },
+                item => item.LoadThumbnail());
+        }
+
         private async Task StartAsync(List<string> paths)
         {
             try
@@ -578,6 +590,9 @@ namespace TinyGUI.ViewModels
                     if (size > 5L * 1024 * 1024)
                         AddLog($"! {item.FileName} 约 {ImageItem.FormatSize(size)}，超出 TinyPNG 单文件 5MB 上限，可能会失败");
                 }
+
+                // 缩略图：丢到后台解码，不阻塞压缩启动。传快照避免列表被清空后取到空集合
+                _ = Task.Run(() => LoadThumbnails(Images.ToList()));
 
                 TotalCount = Images.Count;
                 ProcessedCount = 0;

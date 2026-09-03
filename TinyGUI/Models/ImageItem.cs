@@ -1,5 +1,8 @@
 using System;
 using System.ComponentModel;
+using System.IO;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace TinyGUI.Models
 {
@@ -54,6 +57,51 @@ namespace TinyGUI.Models
         {
             get => _savedPercent;
             set { _savedPercent = value; OnPropertyChanged(nameof(SavedPercent)); OnPropertyChanged(nameof(SavedText)); }
+        }
+
+        /// <summary>缩略图解码宽度。实际显示为 40px，按 2 倍解码保证高清屏不发虚。</summary>
+        private const int ThumbnailDecodeWidth = 80;
+
+        private ImageSource _thumbnail;
+
+        /// <summary>
+        /// 列表缩略图。后台线程解码得到；解码失败（非图片/损坏/无权限）时保持 null，
+        /// 界面上退化为一个浅色占位块，不影响该文件的正常压缩。
+        /// </summary>
+        public ImageSource Thumbnail
+        {
+            get => _thumbnail;
+            private set { _thumbnail = value; OnPropertyChanged(nameof(Thumbnail)); }
+        }
+
+        /// <summary>
+        /// 从磁盘解码一张小缩略图。
+        /// 刻意先整份读进内存流再解码、且解码后 Freeze()，原因有两个：
+        /// 1) 解码完立刻释放文件句柄，全程不占用/锁住原图 —— 压缩结束若勾选「替换原文件」要覆盖写回；
+        /// 2) Freeze 后的 BitmapImage 可跨线程安全交给 UI 线程绑定显示。
+        /// </summary>
+        public void LoadThumbnail()
+        {
+            if (_thumbnail != null) return;
+            try
+            {
+                byte[] bytes = File.ReadAllBytes(FullPath);
+                using (var ms = new MemoryStream(bytes))
+                {
+                    var bmp = new BitmapImage();
+                    bmp.BeginInit();
+                    bmp.StreamSource = ms;
+                    bmp.DecodePixelWidth = ThumbnailDecodeWidth;
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    bmp.EndInit();
+                    bmp.Freeze();
+                    Thumbnail = bmp;
+                }
+            }
+            catch
+            {
+                // 解不出来就留空占位，不打断整批处理
+            }
         }
 
         public string OriginalSizeText => FormatSize(_originalSize);

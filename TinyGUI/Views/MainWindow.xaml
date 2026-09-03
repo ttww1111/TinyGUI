@@ -85,8 +85,9 @@
         </StackPanel>
       </Grid>
 
-      <!-- 文件列表：没有图片时整块隐藏；有图时高度自适应，最多 340px 后内部滚动 -->
-      <Border Grid.Row="1" Margin="0 12 0 0" MinHeight="90" MaxHeight="380" Background="White"
+      <!-- 文件列表：没有图片时整块隐藏；有图时高度自适应，超过上限后内部滚动。
+           上限 420 是配合缩略图行高（每行约 70px）定的，保证一眼能看到 6 行左右 -->
+      <Border Grid.Row="1" Margin="0 12 0 0" MinHeight="90" MaxHeight="420" Background="White"
               CornerRadius="10" BorderBrush="#E2E8F0" BorderThickness="1"
               Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}}">
         <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="6">
@@ -96,10 +97,19 @@
                 <Border Margin="4 4 4 6" Padding="8" CornerRadius="8" Background="#F5F7FA">
                   <Grid>
                     <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="Auto" />
                       <ColumnDefinition Width="*" />
                       <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <!-- 缩略图：等比例填充并圆角裁切。解码失败时 Thumbnail 为 null，退化成浅色占位块 -->
+                    <Border Grid.Column="0" Width="40" Height="40" CornerRadius="5"
+                            Background="#E8ECF1" Margin="0 0 10 0">
+                      <Border.Clip>
+                        <RectangleGeometry RadiusX="5" RadiusY="5" Rect="0,0,40,40" />
+                      </Border.Clip>
+                      <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
                       <TextBlock Text="{Binding FileName}" Foreground="#2D3748" FontWeight="SemiBold"
                                  TextTrimming="CharacterEllipsis" />
                       <StackPanel Orientation="Horizontal" Margin="0 3 0 0">
@@ -113,7 +123,7 @@
                                  TextTrimming="CharacterEllipsis" Margin="0 2 0 0"
                                  Visibility="{Binding ErrorMessage, Converter={StaticResource EmptyToVisibilityConverter}}" />
                     </StackPanel>
-                    <TextBlock Grid.Column="1" Text="{Binding StatusText}" VerticalAlignment="Center"
+                    <TextBlock Grid.Column="2" Text="{Binding StatusText}" VerticalAlignment="Center"
                                Foreground="{Binding StatusColor}" FontWeight="SemiBold" Margin="8 0 0 0" />
                   </Grid>
                 </Border>
