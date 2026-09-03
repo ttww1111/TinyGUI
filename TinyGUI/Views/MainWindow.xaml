@@ -147,11 +147,13 @@
           <Button Grid.Column="1" Margin="8 0 0 0" Padding="10 4" FontSize="11"
                   Style="{StaticResource CornerButton}"
                   Content="{Binding OpenOutputFolder, Source={x:Static local:Loc.Instance}}"
-                  Click="OpenOutputButton_OnClick" />
+                  Click="OpenOutputButton_OnClick"
+                  Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}}" />
           <Button Grid.Column="2" Margin="8 0 0 0" Padding="10 4" FontSize="11"
                   Style="{StaticResource CornerButton}"
                   Content="{Binding ClearList, Source={x:Static local:Loc.Instance}}"
-                  Command="{Binding ClearListCommand}" />
+                  Command="{Binding ClearListCommand}"
+                  Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}}" />
         </Grid>
       </StackPanel>
 
