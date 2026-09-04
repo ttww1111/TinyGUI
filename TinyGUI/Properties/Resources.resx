@@ -262,7 +262,7 @@
     <value>Save as new file</value>
   </data>
   <data name="KeepNewFileTip" xml:space="preserve">
-    <value>The original stays; output goes to the same folder with a "-min" suffix.</value>
+    <value>The original stays; output goes to the same folder with a "_tiny" suffix.</value>
   </data>
   <data name="WidthLabel" xml:space="preserve">
     <value>W</value>

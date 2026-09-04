@@ -135,7 +135,7 @@
         <value>保留為新檔</value>
     </data>
     <data name="KeepNewFileTip" xml:space="preserve">
-        <value>原圖不動，壓縮結果輸出到同一文件夾，文件名自動加「-min」後綴。</value>
+        <value>原圖不動，壓縮結果輸出到同一文件夾，文件名自動加「_tiny」後綴。</value>
     </data>
     <data name="WidthLabel" xml:space="preserve">
         <value>寬</value>

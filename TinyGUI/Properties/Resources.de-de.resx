@@ -135,7 +135,7 @@
         <value>Als neue Datei speichern</value>
     </data>
     <data name="KeepNewFileTip" xml:space="preserve">
-        <value>Das Original bleibt; Ausgabe im gleichen Ordner mit "-min" Suffix.</value>
+        <value>Das Original bleibt; Ausgabe im gleichen Ordner mit "_tiny" Suffix.</value>
     </data>
     <data name="WidthLabel" xml:space="preserve">
         <value>B</value>
