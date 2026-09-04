@@ -9,7 +9,7 @@
     <ApplicationIcon>Images\panda.ico</ApplicationIcon>
     <!-- 单一版本源：程序集版本 / 文件版本 / 信息版本都从这里出。
          改版本只动这一行；UI 与安装包脚本都会自动同步。 -->
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
